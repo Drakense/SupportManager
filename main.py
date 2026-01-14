@@ -3,8 +3,6 @@ import discord
 from dotenv import load_dotenv
 from discord.ext import commands
 from discord import app_commands
-# importacion de las funciones 
-from create_ticket import *
 
 
 # Cargar token y configurar bot
