@@ -23,7 +23,7 @@ bot = commands.Bot(command_prefix= "/" , intents = discord.Intents.all())
 def crear_embed_start():
     embed = discord.Embed(
         title="High Test Request",
-        description="Bienvenido a los high test de drakense network",
+        description="Bienvenido a los high test de Drakense, como requisito minimo debes ser LT3+ en alguna modalidad para abrir un high test",
         color= discord.Colour.blue()
     )
     return embed
@@ -68,89 +68,127 @@ async def crear_ticket(interaction):
     guild = interaction.guild
     user = interaction.user
     
-    modal = discord.ui.Modal(title="Formulario de High Test")
+    roles = [
+        "LT3〢NethPot",
+        "HT3〢NethPot",
+        "LT2〢NethPot",
+        "HT2〢NethPot",
+        "LT1 〢NethPot",
+        "HT1〢NethPot",
+        "LT3〢CrystalPvP",
+        "HT3〢CrystalPvP",
+        "LT2〢CrystalPvP",
+        "HT2〢CrystalPvP",
+        "LT1〢CrystalPvP",
+        "HT1〢CrystalPvP",
+        "LT3〢Sword",
+        "HT3〢Sword",
+        "LT2〢Sword",
+        "HT2〢Sword",
+        "LT1〢Sword",
+        "HT1〢Sword",
+        "LT3〢MacePvP",
+        "HT3〢MacePvP",
+        "LT2〢MacePvP",
+        "HT2〢MacePvP",
+        "LT1〢MacePvP",
+        "HT1〢MacePvP"
+    ]
     
-    campo_ign = discord.ui.TextInput(
-        label="nombre de MC",
-        placeholder="ing",
-        required=True,
-        max_length=30
-    )
+    roles_para_abrir_high_test = []
     
-    campo_modalidad = discord.ui.TextInput(
-        label="Modalidad del test",
-        placeholder="uhc : sword : netherite pots : cpvp ... ",
-        required=True,
-        max_length=30
-    )
+    for rol in roles:
+        role_obj = discord.utils.get(interaction.guild.roles, name=rol)
+        if role_obj:
+            roles_para_abrir_high_test.append(role_obj)
     
-    modal.add_item(campo_ign)
-    modal.add_item(campo_modalidad)
     
-    async def on_submit(inter_modal : discord.Interaction):
-        ign = campo_ign.value
-        modalidad = campo_modalidad.value
-        rol_tester = discord.utils.get(guild.roles , name = "Tester")
-        rol_helper = discord.utils.get(guild.roles , name = "Helper")
-        rol_tmod = discord.utils.get(guild.roles , name = "T-Mod")
-        rol_mod = discord.utils.get(guild.roles , name = "Mod")
-        rol_srmod = discord.utils.get(guild.roles , name = "Sr Mod")
-        rol_regulador = discord.utils.get(guild.roles , name = "Regulator")
-        rol_jradmin = discord.utils.get(guild.roles , name = "Jr Admin")
-        rol_admin = discord.utils.get(guild.roles , name = "Admin")
+    if any(role in user.roles for role in roles_para_abrir_high_test):
+        modal = discord.ui.Modal(title="Formulario de High Test")
         
-        channel_overwrites = {
-            guild.default_role : discord.PermissionOverwrite(read_messages=False), # usuarios comunes no pueden ver el canal
-            user : discord.PermissionOverwrite(read_message_history= True, read_messages= True, send_messages= True), # creador del ticket puede ver y escribir
-            rol_tester : discord.PermissionOverwrite(read_message_history= True, read_messages= True, send_messages= True), # aquellos con rol staff si pueden ver y escribir
-            rol_helper : discord.PermissionOverwrite(read_message_history= True, read_messages= True, send_messages= True),
-            rol_tmod : discord.PermissionOverwrite(read_message_history= True, read_messages= True, send_messages= True),
-            rol_mod : discord.PermissionOverwrite(read_message_history= True, read_messages= True, send_messages= True),
-            rol_srmod : discord.PermissionOverwrite(read_message_history= True, read_messages= True, send_messages= True),
-            rol_regulador : discord.PermissionOverwrite(read_message_history= True, read_messages= True, send_messages= True),
-            rol_jradmin : discord.PermissionOverwrite(read_message_history= True, read_messages= True, send_messages= True),
-            rol_admin : discord.PermissionOverwrite(read_message_history= True, read_messages= True, send_messages= True)
-        }
-        
-        # crear ticket porfin amigo
-        ticket = await guild.create_text_channel(
-            name = f"📂 {user.name}",
-            overwrites = channel_overwrites
+        campo_ign = discord.ui.TextInput(
+            label="nombre de MC",
+            placeholder="ing",
+            required=True,
+            max_length=30
         )
         
-        
-        # responder al usuario con autismo para que se de cuenta que hizo un ticket por ahi es boludito
-        await inter_modal.response.send_message(
-            f" tu ticket ha sido creado {ticket.mention}",
-            ephemeral = True
+        campo_modalidad = discord.ui.TextInput(
+            label="Modalidad del test",
+            placeholder="uhc : sword : netherite pots : cpvp ... ",
+            required=True,
+            max_length=30
         )
         
-        # definicion del embed para mandar
-        embed = discord.Embed(
-            title = f"{ticket.name}",
-            description = "Bienvenido a los high test de Drakense, los testers estaran con usted cuando se encuentren con disponibilidad. Agradecemos la paciencia y porfavor evite el tag directo a miembros del staff o testers, los mismos reguladores le asignaran un tester en caso de no contar con disponibilidad suficiente",
-            color = discord.Colour.blue()
-        )
-        embed.add_field(
-            name="", value="----------------------",inline=False
-        )
-        embed.add_field(
-            name="IGN", value=f"{ign}",inline=False
-        )
+        modal.add_item(campo_ign)
+        modal.add_item(campo_modalidad)
         
-        embed.add_field(
-            name="Modalidad", value=f"{modalidad}",inline=False
+        async def on_submit(inter_modal : discord.Interaction):
+            ign = campo_ign.value
+            modalidad = campo_modalidad.value
+            rol_tester = discord.utils.get(guild.roles , name = "Tester")
+            rol_helper = discord.utils.get(guild.roles , name = "Helper")
+            rol_tmod = discord.utils.get(guild.roles , name = "T-Mod")
+            rol_mod = discord.utils.get(guild.roles , name = "Mod")
+            rol_srmod = discord.utils.get(guild.roles , name = "Sr Mod")
+            rol_regulador = discord.utils.get(guild.roles , name = "Regulator")
+            rol_jradmin = discord.utils.get(guild.roles , name = "Jr Admin")
+            rol_admin = discord.utils.get(guild.roles , name = "Admin")
+            
+            channel_overwrites = {
+                guild.default_role : discord.PermissionOverwrite(read_messages=False), # usuarios comunes no pueden ver el canal
+                user : discord.PermissionOverwrite(read_message_history= True, read_messages= True, send_messages= True), # creador del ticket puede ver y escribir
+                rol_tester : discord.PermissionOverwrite(read_message_history= True, read_messages= True, send_messages= True), # aquellos con rol staff si pueden ver y escribir
+                rol_helper : discord.PermissionOverwrite(read_message_history= True, read_messages= True, send_messages= True),
+                rol_tmod : discord.PermissionOverwrite(read_message_history= True, read_messages= True, send_messages= True),
+                rol_mod : discord.PermissionOverwrite(read_message_history= True, read_messages= True, send_messages= True),
+                rol_srmod : discord.PermissionOverwrite(read_message_history= True, read_messages= True, send_messages= True),
+                rol_regulador : discord.PermissionOverwrite(read_message_history= True, read_messages= True, send_messages= True),
+                rol_jradmin : discord.PermissionOverwrite(read_message_history= True, read_messages= True, send_messages= True),
+                rol_admin : discord.PermissionOverwrite(read_message_history= True, read_messages= True, send_messages= True)
+            }
+            
+            # crear ticket porfin amigo
+            ticket = await guild.create_text_channel(
+                name = f"📂 {user.name}",
+                overwrites = channel_overwrites
+            )
+            
+            
+            # responder al usuario con autismo para que se de cuenta que hizo un ticket por ahi es boludito
+            await inter_modal.response.send_message(
+                f" tu ticket ha sido creado {ticket.mention}",
+                ephemeral = True
+            )
+            
+            # definicion del embed para mandar
+            embed = discord.Embed(
+                title = f"{ticket.name}",
+                description = "Bienvenido a los high test de Drakense, los testers estaran con usted cuando se encuentren con disponibilidad. Agradecemos la paciencia y porfavor evite el tag directo a miembros del staff o testers, los mismos reguladores le asignaran un tester en caso de no contar con disponibilidad suficiente",
+                color = discord.Colour.blue()
+            )
+            embed.add_field(
+                name="", value="----------------------",inline=False
+            )
+            embed.add_field(
+                name="IGN", value=f"{ign}",inline=False
+            )
+            
+            embed.add_field(
+                name="Modalidad", value=f"{modalidad}",inline=False
+            )
+            vista_cerrar = crear_boton_cerrar()
+            await ticket.send(
+            embed = embed,
+            view = vista_cerrar
+            )
+        modal.on_submit = on_submit
+        await interaction.response.send_modal(modal)
+    else:
+        await interaction.response.send_message(
+            "No tienes los roles necesarios para solicitar un High Test.",
+            ephemeral=True
         )
-        vista_cerrar = crear_boton_cerrar()
-        await ticket.send(
-        embed = embed,
-        view = vista_cerrar
-        )
-    modal.on_submit = on_submit
-    await interaction.response.send_modal(modal)
-
-
-
 
 
 
@@ -179,6 +217,8 @@ async def on_ready():
     vista2 = crear_boton_cerrar()
     bot.add_view(vista)
     bot.add_view(vista2)
+    
+
     print("support manager is online succesfully")
 
 
