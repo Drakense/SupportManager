@@ -2,7 +2,8 @@ import os
 import discord
 from dotenv import load_dotenv
 from discord.ext import commands
-from discord import app_commands
+import sqlite3 
+
 
 
 # Cargar token y configurar bot
@@ -213,11 +214,21 @@ def crear_boton_request_high_test():
 # on_ready registra las vistas persistentes para que los botones sigan funcionando.
 @bot.event
 async def on_ready():
-    vista = crear_boton_request_high_test()
-    vista2 = crear_boton_cerrar()
-    bot.add_view(vista)
-    bot.add_view(vista2)
+    vista_request_high_test = crear_boton_request_high_test()
+    vista_cerrar_high_test = crear_boton_cerrar()
+    bot.add_view(vista_request_high_test)
+    bot.add_view(vista_cerrar_high_test)
+    boton_nethpot = crear_boton_waitlist_nethpot()
+    boton_sword = crear_boton_waitlist_sword()
+    boton_mace = crear_boton_waitlist_mace()
+    boton_cristal = crear_boton_waitlist_cristal()
+    vista_autorol = discord.ui.View(timeout=None)
+    vista_autorol.add_item(boton_nethpot)
+    vista_autorol.add_item(boton_sword)
+    vista_autorol.add_item(boton_mace)
+    vista_autorol.add_item(boton_cristal)
     
+    bot.add_view(vista_autorol)
 
     print("support manager is online succesfully")
 
@@ -241,6 +252,142 @@ async def add_user(ctx, usuario: discord.Member):
     await ctx.channel.set_permissions(usuario, overwrite=overwrites)
     await ctx.send(f"{usuario.mention} agregado al canal")
 
+
+# ============================
+#       - AUTO ROLES -
+# ============================
+
+async def agregar_rol():
+    pass
+    # rol_waitlist_nethpot = discord.utils.get(guild.roles , name = "Waitlist Nethpot")
+    # rol_waitlist_sword = discord.utils.get(guild.roles , name = "Waitlist Sword")
+    # rol_waitlist_cpvp = discord.utils.get(guild.roles , name = "Waitlist Cristal")
+    # rol_waitlist_mace = discord.utils.get(guild.roles , name = "Waitlist Mace")
+
+def embed_autorol():
+    embed = discord.Embed(
+        title= "Auto Rol de Waitlist",
+        description= "Presiona los botones para activar las notificaciones de cuando se abra waitlist en una modalidad",
+        color= discord.Colour.pink()
+    )
+    
+    return embed
+
+@bot.command()
+async def start_autorol(ctx):
+    embed = embed_autorol()
+    boton_nethpot = crear_boton_waitlist_nethpot()
+    boton_sword = crear_boton_waitlist_sword()
+    boton_mace = crear_boton_waitlist_mace()
+    boton_cristal = crear_boton_waitlist_cristal()
+    vista_autorol = discord.ui.View(timeout=None)
+    vista_autorol.add_item(boton_nethpot)
+    vista_autorol.add_item(boton_sword)
+    vista_autorol.add_item(boton_mace)
+    vista_autorol.add_item(boton_cristal)
+
+
+    await ctx.send(embed = embed, view = vista_autorol)
+
+
+# ============================
+# waitlist Nethpot
+def crear_boton_waitlist_nethpot():
+    boton = discord.ui.Button(
+        label="Waitlist NethPot",
+        style=discord.ButtonStyle.primary,
+        custom_id="dar_rol_waitlist_nethpot"
+    )
+
+    boton.callback = dar_rol_waitlist_nethpot
+    return boton
+
+
+async def dar_rol_waitlist_nethpot(interaction):
+    guild = interaction.guild 
+    user = interaction.user
+    
+    rol_waitlist_nethpot = discord.utils.get(guild.roles , name = "Waitlist Nethpot")
+    await user.add_roles(rol_waitlist_nethpot)
+    await interaction.response.send_message("Ahora seras notificado cuando se abra la waitlist de NethPot", ephemeral = True)
+
+
+# ============================
+# waitlist Sword
+
+
+def crear_boton_waitlist_sword():
+    boton = discord.ui.Button(
+        label="Waitlist Sword",
+        style=discord.ButtonStyle.primary,
+        custom_id="dar_rol_waitlist_sword"
+    )
+
+    boton.callback = dar_rol_waitlist_sword
+    
+    return boton
+
+
+async def dar_rol_waitlist_sword(interaction):
+    guild = interaction.guild 
+    user = interaction.user
+    
+    rol_waitlist_sword = discord.utils.get(guild.roles , name = "Waitlist Sword")
+    await user.add_roles(rol_waitlist_sword)
+    await interaction.response.send_message("Ahora seras notificado cuando se abra la waitlist de Sword", ephemeral = True)
+    
+    
+# ============================
+# waitlist Mace
+
+
+def crear_boton_waitlist_mace():
+    boton = discord.ui.Button(
+        label="Waitlist Mace",
+        style=discord.ButtonStyle.primary,
+        custom_id="dar_rol_waitlist_mace"
+    )
+
+    boton.callback = dar_rol_waitlist_mace
+    
+    return boton
+
+
+async def dar_rol_waitlist_mace(interaction):
+    guild = interaction.guild 
+    user = interaction.user
+    
+    rol_waitlist_mace = discord.utils.get(guild.roles , name = "Waitlist Mace")
+    await user.add_roles(rol_waitlist_mace)
+    await interaction.response.send_message("Ahora seras notificado cuando se abra la waitlist de Mace", ephemeral = True)
+    
+
+
+
+# ============================
+# waitlist Cristal
+
+def crear_boton_waitlist_cristal():
+    boton = discord.ui.Button(
+        label="Waitlist Cristal",
+        style=discord.ButtonStyle.primary,
+        custom_id="dar_rol_waitlist_cristal"
+    )
+
+    boton.callback = dar_rol_waitlist_cristal
+    
+    return boton
+
+
+async def dar_rol_waitlist_cristal(interaction):
+    guild = interaction.guild 
+    user = interaction.user
+    
+    rol_waitlist_cristal = discord.utils.get(guild.roles , name = "Waitlist Cristal")
+    await user.add_roles(rol_waitlist_cristal)
+    await interaction.response.send_message("Ahora seras notificado cuando se abra la waitlist de Cristal", ephemeral = True)
+    
+    
 
 # Ejecutar bot
 bot.run(TOKEN)
