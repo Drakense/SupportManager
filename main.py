@@ -257,12 +257,6 @@ async def add_user(ctx, usuario: discord.Member):
 #       - AUTO ROLES -
 # ============================
 
-async def agregar_rol():
-    pass
-    # rol_waitlist_nethpot = discord.utils.get(guild.roles , name = "Waitlist Nethpot")
-    # rol_waitlist_sword = discord.utils.get(guild.roles , name = "Waitlist Sword")
-    # rol_waitlist_cpvp = discord.utils.get(guild.roles , name = "Waitlist Cristal")
-    # rol_waitlist_mace = discord.utils.get(guild.roles , name = "Waitlist Mace")
 
 def embed_autorol():
     embed = discord.Embed(
