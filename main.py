@@ -51,6 +51,8 @@ async def cerrar_ticket(interaction):
         channel = interaction.channel
         await channel.send("Cerrando ticket...")
         await channel.delete()
+    else:
+        await channel.send_message("no puedes cerrar ticket con tus permisos actuales papu", ephemeral = True)
 
 
 def crear_boton_cerrar():
