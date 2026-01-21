@@ -33,9 +33,24 @@ def crear_embed_start():
 # --- Flujo: cerrar ticket
 # Este flujo es invocado por el botón de cerrar (vista persistente).
 async def cerrar_ticket(interaction):
-    channel = interaction.channel
-    await channel.send("Cerrando ticket...")
-    await channel.delete()
+    user = interaction.user
+    guild = interaction.guild 
+    roles = [
+        "Tester",
+        "Staff Team"
+    ]
+    
+    roles_for_close_ticket = []
+    
+    for rol in roles:
+        rol_obj = discord.utils.get(guild.roles, name = rol)
+    if rol_obj:
+        roles_for_close_ticket.append(rol_obj)
+    
+    if any(rol in user.roles for rol in roles_for_close_ticket):
+        channel = interaction.channel
+        await channel.send("Cerrando ticket...")
+        await channel.delete()
 
 
 def crear_boton_cerrar():
@@ -232,7 +247,9 @@ async def on_ready():
 
     print("support manager is online succesfully")
 
-
+# ==================================
+#   - Desplegar panel high test -
+# ==================================
 @bot.command()
 @commands.has_permissions(administrator=True)
 async def start_ht(ctx):
@@ -243,9 +260,9 @@ async def start_ht(ctx):
     
     await ctx.message.delete()
 
-
-# Funcionalidad de add user
-# Flujo: administrador/staff ejecuta `add_user` en un canal de ticket -> se añaden permisos al `usuario`
+# ==================================
+#           - Add User -
+# ==================================
 @bot.command()
 async def add_user(ctx, usuario: discord.Member):
     overwrites = discord.PermissionOverwrite(view_channel=True, send_messages=True)
@@ -264,9 +281,11 @@ def embed_autorol():
         description= "Presiona los botones para activar las notificaciones de cuando se abra waitlist en una modalidad",
         color= discord.Colour.pink()
     )
-    
     return embed
 
+# ==================================
+#     - Desplegar Panel Autorol -
+# ==================================
 @bot.command()
 async def start_autorol(ctx):
     embed = embed_autorol()
@@ -292,7 +311,6 @@ def crear_boton_waitlist_nethpot():
         style=discord.ButtonStyle.primary,
         custom_id="dar_rol_waitlist_nethpot"
     )
-
     boton.callback = dar_rol_waitlist_nethpot
     return boton
 
@@ -300,7 +318,6 @@ def crear_boton_waitlist_nethpot():
 async def dar_rol_waitlist_nethpot(interaction):
     guild = interaction.guild 
     user = interaction.user
-    
     rol_waitlist_nethpot = discord.utils.get(guild.roles , name = "Waitlist Nethpot")
     await user.add_roles(rol_waitlist_nethpot)
     await interaction.response.send_message("Ahora seras notificado cuando se abra la waitlist de NethPot", ephemeral = True)
@@ -325,7 +342,6 @@ def crear_boton_waitlist_sword():
 async def dar_rol_waitlist_sword(interaction):
     guild = interaction.guild 
     user = interaction.user
-    
     rol_waitlist_sword = discord.utils.get(guild.roles , name = "Waitlist Sword")
     await user.add_roles(rol_waitlist_sword)
     await interaction.response.send_message("Ahora seras notificado cuando se abra la waitlist de Sword", ephemeral = True)
@@ -341,16 +357,13 @@ def crear_boton_waitlist_mace():
         style=discord.ButtonStyle.primary,
         custom_id="dar_rol_waitlist_mace"
     )
-
     boton.callback = dar_rol_waitlist_mace
-    
     return boton
 
 
 async def dar_rol_waitlist_mace(interaction):
     guild = interaction.guild 
     user = interaction.user
-    
     rol_waitlist_mace = discord.utils.get(guild.roles , name = "Waitlist Mace")
     await user.add_roles(rol_waitlist_mace)
     await interaction.response.send_message("Ahora seras notificado cuando se abra la waitlist de Mace", ephemeral = True)
@@ -367,21 +380,16 @@ def crear_boton_waitlist_cristal():
         style=discord.ButtonStyle.primary,
         custom_id="dar_rol_waitlist_cristal"
     )
-
     boton.callback = dar_rol_waitlist_cristal
-    
     return boton
 
 
 async def dar_rol_waitlist_cristal(interaction):
     guild = interaction.guild 
     user = interaction.user
-    
     rol_waitlist_cristal = discord.utils.get(guild.roles , name = "Waitlist Cristal")
     await user.add_roles(rol_waitlist_cristal)
     await interaction.response.send_message("Ahora seras notificado cuando se abra la waitlist de Cristal", ephemeral = True)
-    
-    
 
 # Ejecutar bot
 bot.run(TOKEN)
