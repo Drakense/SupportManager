@@ -5,7 +5,6 @@ from discord.ext import commands
 import sqlite3 
 
 
-
 # Cargar token y configurar bot
 load_dotenv()
 TOKEN = os.getenv("DISCORD_TOKEN")
@@ -44,15 +43,134 @@ async def cerrar_ticket(interaction):
     
     for rol in roles:
         rol_obj = discord.utils.get(guild.roles, name = rol)
-    if rol_obj:
-        roles_for_close_ticket.append(rol_obj)
+        if rol_obj:
+            roles_for_close_ticket.append(rol_obj)
+            
+    channel = interaction.channel
     
     if any(rol in user.roles for rol in roles_for_close_ticket):
-        channel = interaction.channel
-        await channel.send("Cerrando ticket...")
-        await channel.delete()
+        
+
+        
+        
+        # conteo de id de los ticketsitos y esas cosas
+        with open("id_logs_register.txt" , "r") as id_log:
+            try:
+                liniesitas = id_log.readlines()
+                ultima_liniesita = int(liniesitas[-1].strip())
+            except FileNotFoundError as e:
+                print(f"/ the file dont exists / - {e}")
+                
+        with open("id_logs_register.txt" , "a") as id_log:
+            ultima_liniesita = ultima_liniesita + 1
+            id_log.write(f"{ultima_liniesita}\n")
+        
+        nombre_log = f"{ultima_liniesita}-{channel.name}.html"
+        
+        # inicializacion de estilos 
+        with open(f"/home/pablo/td/drakensedsbot/transcripts/{nombre_log}", "a") as log:
+            log.write('''
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Ticket Log</title>
+    <style>
+        body {
+            background-color: #36393f;
+            color: #dcddde;
+            font-family: Whitney, "Helvetica Neue", Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+        .message {
+            padding: 8px 16px;
+            margin: 4px 0;
+            border-left: 4px solid transparent;
+        }
+        .message:hover {
+            background-color: #32353b;
+            border-left-color: #5865f2;
+        }
+        .author {
+            font-weight: 600;
+            color: #fff;
+            display: inline;
+            margin-right: 8px;
+        }
+        .timestamp {
+            font-size: 12px;
+            color: #72767d;
+            margin-left: 8px;
+        }
+        .content {
+            color: #dcddde;
+            margin-top: 4px;
+            word-wrap: break-word;
+        }
+        .bot {
+            background-color: #5865f2;
+            color: white;
+            font-size: 10px;
+            padding: 2px 4px;
+            border-radius: 3px;
+            margin-left: 6px;
+            vertical-align: middle;
+        }
+        h1 {
+            color: #fff;
+            border-bottom: 2px solid #5865f2;
+            padding-bottom: 10px;
+        }
+    </style>
+</head>
+
+''')
+        
+        # contenido del ticket con los mensajes
+        with open(f"/home/pablo/td/drakensedsbot/transcripts/{nombre_log}","a") as log:
+            messages_iterator = channel.history(limit=None, oldest_first=True)
+            message_list = []
+            async for message in messages_iterator:
+                message_list.append(message)
+            for msg in message_list:
+                log.write(f'''
+    <div class="message">
+        <span class="author">{msg.author}</span>
+        <span class="timestamp">({message.created_at.strftime('%d-%m-%y %H:%M:%S')}</span>
+        <div class="content">{msg.content}</div>
+    </div>
+''')
+        with open(f"/home/pablo/td/drakensedsbot/transcripts/{nombre_log}","a") as log:
+            log.write(f'''
+</body>
+</html>
+''')
+
+        channel_ticket = interaction.channel
+        log_embed = discord.Embed(
+            title=f"{channel_ticket.name}",
+            description="Log creado, visite el siguiente link para poder ver la transcripcion",
+            color= discord.Colour.purple()
+        )
+        
+        log_embed.add_field(
+            name= "Link del transcript",
+            value=f"[transcript](https://transcripts.pablorelojerio.online/{nombre_log})"
+        )
+        
+        logs_channel = bot.get_channel(1466112270705885462)
+        await logs_channel.send(embed=log_embed)
+        
+        await interaction.response.defer(ephemeral = True)
+        # aca se cierra el tickesito
+        try:
+            await channel.delete()
+        except discord.errors.NotFound:
+            pass
     else:
-        await channel.send_message("no puedes cerrar ticket con tus permisos actuales papu", ephemeral = True)
+        await channel.send("no puedes cerrar ticket con tus permisos actuales papu")
+            
+            
 
 
 def crear_boton_cerrar():
@@ -87,36 +205,40 @@ async def crear_ticket(interaction):
     user = interaction.user
     
     roles = [
-        "LT3〢NethPot",
-        "HT3〢NethPot",
-        "LT2〢NethPot",
-        "HT2〢NethPot",
-        "LT1 〢NethPot",
-        "HT1〢NethPot",
-        "LT3〢CrystalPvP",
-        "HT3〢CrystalPvP",
-        "LT2〢CrystalPvP",
-        "HT2〢CrystalPvP",
-        "LT1〢CrystalPvP",
-        "HT1〢CrystalPvP",
-        "LT3〢Sword",
-        "HT3〢Sword",
-        "LT2〢Sword",
-        "HT2〢Sword",
-        "LT1〢Sword",
-        "HT1〢Sword",
-        "LT3〢MacePvP",
-        "HT3〢MacePvP",
-        "LT2〢MacePvP",
-        "HT2〢MacePvP",
-        "LT1〢MacePvP",
-        "HT1〢MacePvP"
+        # nethpot
+        1405251979210395700,
+        1405251857080647731,
+        1405251743821987993,
+        1405251920897114202,
+        1405251793427894343,
+        1405251665619058698,
+        # sword
+        1409331647752700114,
+        1409332005211996322,
+        1409332180488032276,
+        1409331897590349824,
+        1409332092348928020,
+        1409332272313794650,
+        # crystalpvp
+        1409325012778745926,
+        1409328227541057576,
+        1409328769411317781,
+        1409327273391292466,
+        1409328574162272336,
+        1409328943051309086,
+        # mace
+        1411862768625389709,
+        1411862274775318598,
+        1411861984139542568,
+        1411862839177646140,
+        1411862068663160913,
+        1410441285109678312
     ]
-    
+
     roles_para_abrir_high_test = []
     
     for rol in roles:
-        role_obj = discord.utils.get(interaction.guild.roles, name=rol)
+        role_obj = discord.utils.get(interaction.guild.roles, id = rol)
         if role_obj:
             roles_para_abrir_high_test.append(role_obj)
     
@@ -133,7 +255,7 @@ async def crear_ticket(interaction):
         
         campo_modalidad = discord.ui.TextInput(
             label="Modalidad del test",
-            placeholder="uhc : sword : netherite pots : cpvp ... ",
+            placeholder="NethPot | Sword | Cpvp | Mace",
             required=True,
             max_length=30
         )
@@ -165,11 +287,12 @@ async def crear_ticket(interaction):
                 rol_jradmin : discord.PermissionOverwrite(read_message_history= True, read_messages= True, send_messages= True),
                 rol_admin : discord.PermissionOverwrite(read_message_history= True, read_messages= True, send_messages= True)
             }
-            
+            categoria = discord.Object(id = 1464649713377607680)
             # crear ticket porfin amigo
             ticket = await guild.create_text_channel(
                 name = f"📂 {user.name}",
-                overwrites = channel_overwrites
+                overwrites = channel_overwrites,
+                category = categoria
             )
             
             
