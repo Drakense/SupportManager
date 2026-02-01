@@ -204,6 +204,7 @@ async def crear_ticket(interaction):
     guild = interaction.guild
     user = interaction.user
     
+    # roles 
     roles = [
         # nethpot
         1405251979210395700,
