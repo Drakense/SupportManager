@@ -233,7 +233,28 @@ async def crear_ticket(interaction):
         1411861984139542568,
         1411862839177646140,
         1411862068663160913,
-        1410441285109678312
+        1410441285109678312,
+        # uhc
+        1467680708842619026,
+        1467680739532345627,
+        1467680784209940510,
+        1467680854129246361,
+        1467680892343423026,
+        1467680935616053365,
+        # diapot
+        1467682866908627055,
+        1467682949154472165,
+        1467683081296285797,
+        1467683130831016171,
+        1467683193564954916,
+        1467683264071340206,
+        #smp
+        1467685970433282224,
+        1467685994613706875,
+        1467686397472276603,
+        1467686469815767306,
+        1467686546864869561,
+        1467686647565914197
     ]
 
     roles_para_abrir_high_test = []
@@ -256,7 +277,7 @@ async def crear_ticket(interaction):
         
         campo_modalidad = discord.ui.TextInput(
             label="Modalidad del test",
-            placeholder="NethPot | Sword | Cpvp | Mace",
+            placeholder="NethPot | Sword | Cpvp | Mace | SMP | UHC | Diapot",
             required=True,
             max_length=30
         )
@@ -419,11 +440,17 @@ async def start_autorol(ctx):
     boton_sword = crear_boton_waitlist_sword()
     boton_mace = crear_boton_waitlist_mace()
     boton_cristal = crear_boton_waitlist_cristal()
+    boton_smp = crear_boton_waitlist_smp()
+    boton_uhc = crear_boton_waitlist_uhc()
+    boton_diapot = crear_boton_waitlist_diapot()
     vista_autorol = discord.ui.View(timeout=None)
     vista_autorol.add_item(boton_nethpot)
     vista_autorol.add_item(boton_sword)
     vista_autorol.add_item(boton_mace)
     vista_autorol.add_item(boton_cristal)
+    vista_autorol.add_item(boton_smp)
+    vista_autorol.add_item(boton_uhc)
+    vista_autorol.add_item(boton_diapot)
 
 
     await ctx.send(embed = embed, view = vista_autorol)
@@ -516,6 +543,68 @@ async def dar_rol_waitlist_cristal(interaction):
     rol_waitlist_cristal = discord.utils.get(guild.roles , name = "Waitlist Cristal")
     await user.add_roles(rol_waitlist_cristal)
     await interaction.response.send_message("Ahora seras notificado cuando se abra la waitlist de Cristal", ephemeral = True)
+
+
+# ============================
+# waitlist smp (por hacer)
+
+def crear_boton_waitlist_smp():
+    boton = discord.ui.Button(
+        label="Waitlist SMP",
+        style=discord.ButtonStyle.primary,
+        custom_id="dar_rol_waitlist_smp"
+    )
+    boton.callback = dar_rol_waitlist_smp
+    return boton
+
+
+async def dar_rol_waitlist_smp(interaction):
+    guild = interaction.guild 
+    user = interaction.user
+    rol_waitlist_smp = discord.utils.get(guild.roles , name = "Waitlist SMP")
+    await user.add_roles(rol_waitlist_smp)
+    await interaction.response.send_message("Ahora seras notificado cuando se abra la waitlist de SMP", ephemeral = True)
+
+
+# ============================
+# waitlist uhc
+
+def crear_boton_waitlist_uhc():
+    boton = discord.ui.Button(
+        label="Waitlist UHC",
+        style=discord.ButtonStyle.primary,
+        custom_id="dar_rol_waitlist_uhc"
+    )
+    boton.callback = dar_rol_waitlist_uhc
+    return boton
+
+
+async def dar_rol_waitlist_uhc(interaction):
+    guild = interaction.guild 
+    user = interaction.user
+    rol_waitlist_uhc = discord.utils.get(guild.roles , name = "Waitlist UHC")
+    await user.add_roles(rol_waitlist_uhc)
+    await interaction.response.send_message("Ahora seras notificado cuando se abra la waitlist de UHC", ephemeral = True)
+    
+# =================
+# waitlist diapot
+
+def crear_boton_waitlist_diapot():
+    boton = discord.ui.Button(
+        label="Waitlist diamondpot",
+        style=discord.ButtonStyle.primary,
+        custom_id="dar_rol_waitlist_diapot"
+    )
+    boton.callback = dar_rol_waitlist_diapot
+    return boton
+
+
+async def dar_rol_waitlist_diapot(interaction):
+    guild = interaction.guild 
+    user = interaction.user
+    rol_waitlist_diapot = discord.utils.get(guild.roles , name = "Waitlist DiaPot")
+    await user.add_roles(rol_waitlist_diapot)
+    await interaction.response.send_message("Ahora seras notificado cuando se abra la waitlist de DiamondPot", ephemeral = True)
 
 # Ejecutar bot
 bot.run(TOKEN)
